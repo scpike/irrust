@@ -1,0 +1,10 @@
+[package]
+name = "irrust"
+version = "0.1.0"
+authors = ["Stephen Pike <steve@scpike.net>"]
+
+[dependencies]
+itertools = "0.4.3"
+unidecode = "0.2.0"
+csv = "0.14"
+regex = "0.1.41"
