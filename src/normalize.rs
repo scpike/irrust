@@ -2,14 +2,17 @@ use regex::Regex;
 use unidecode::unidecode;
 
 fn remove_tokens<'a>(s: &str) -> String {
-    let corp_toks = Regex::new(r"\b(llc|inc|ltd|pte|intl|gmbh|corp|corporation|company|co|sa|sl|winery|wines|bodega|slu|vineyard|winework|cellar)\b").unwrap();
+    let corp_toks = Regex::new(r"\b(llc|inc|ltd|pte|intl|gmbh|corp|corporation|company|co|sa|sl|winery|wines|bodega|slu|vineyard|winework|cellar|the)\b").unwrap();
 
     let rm_ch = Regex::new(r"\bch\b").unwrap().replace_all(s, "chateau");
     let rm_dom = Regex::new(r"\bdom\b").unwrap().replace_all(&rm_ch, "domaine");
     let rm_mt = Regex::new(r"\bmtn\b").unwrap().replace_all(&rm_dom, "mountain");
-    let s3 = corp_toks.replace_all(&rm_mt, "");
-    s3.replace("&", " and ")
+
+    let s3 = corp_toks.replace_all(&rm_mt, " ");
+    s3.replace("&", " ")
         .replace(" de ", " de")
+        .replace(".", " ")
+        .replace(",", "")
         .trim().to_string()
 }
 

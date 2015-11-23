@@ -13,11 +13,8 @@ use std::io::Write;
 mod jaccard;
 mod normalize;
 
-fn block(s: &str) -> Option<char> {
-    match s.chars().find(|l| l.is_alphanumeric()) {
-        Some (x) => x.to_lowercase().next(),
-        None => None,
-    }
+fn block(s: &str) -> Vec<char> {
+    s.chars().filter(|l| l.is_alphanumeric()).take(2).collect()
 }
 
 macro_rules! println_stderr(
@@ -36,7 +33,8 @@ fn main() {
     let stdin = io::stdin();
 
     let mut wtr = csv::Writer::from_memory();
-    let lines: Vec<String> = stdin.lock().lines().map(|x| x.unwrap()).collect();
+    let mut lines: Vec<String> = stdin.lock().lines().map(|x| x.unwrap()).collect();
+    lines.sort_by(|a, b| a.cmp(b));
     let mut normals = HashMap::new();
 
     let mut i = 0;
@@ -44,10 +42,9 @@ fn main() {
         normals.insert(l, normalize::normalize(l));
     }
 
-    for (a, b) in lines.iter().combinations() {
-        i += 1;
-        if i % 1000000 == 0 { println_stderr!("{}", i); }
-        if block(a) == block(b) {
+    for (_, group) in lines.iter().group_by(|l| block(l)) {
+        for (a, b) in group.iter().combinations() {
+            i += 1;
             let na = normals.get(a);
             let nb = normals.get(b);
             let dist = jaccard::compare_normals(na.unwrap(), nb.unwrap());
