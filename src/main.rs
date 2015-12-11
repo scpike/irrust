@@ -14,7 +14,8 @@ mod jaccard;
 mod normalize;
 
 fn block(s: &str) -> Vec<char> {
-    s.chars().filter(|l| l.is_alphanumeric()).take(2).collect()
+    normalize::normalize(s).trim().chars()
+        .filter(|l| l.is_alphanumeric()).take(2).collect()
 }
 
 macro_rules! println_stderr(
