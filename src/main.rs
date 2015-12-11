@@ -37,14 +37,12 @@ fn main() {
     lines.sort_by(|a, b| a.cmp(b));
     let mut normals = HashMap::new();
 
-    let mut i = 0;
     for l in &lines {
         normals.insert(l, normalize::normalize(l));
     }
 
     for (_, group) in lines.iter().group_by(|l| block(l)) {
         for (a, b) in group.iter().combinations() {
-            i += 1;
             let na = normals.get(a);
             let nb = normals.get(b);
             let dist = jaccard::compare_normals(na.unwrap(), nb.unwrap());
